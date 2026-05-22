@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>34. Carosello</title>
+    <style>
+        #container {
+            position: relative;
+            width: 800px;
+            max-width: 100%;
+            margin: auto;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 4px 50px #00000091;
+        }
+
+        .slide {
+            display: flex;
+            width: 100%;
+        }
+
+        .slide img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .btn {
+            position: absolute;
+            top: 50%;
+            width: 60px;
+            height: 60px;
+            transform: translateY(-50%);
+            transition: 0.1s ease-in-out;
+            background-color: #8686868c;
+            color: white;
+            border: none;
+            border-radius: 100%;
+            padding: 16px;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 1.2em;
+        }
+
+        .btn:hover {
+            background-color: #f1f1f18c;
+        }
+
+        #prev {
+            left: 10px;
+        }
+
+        #next {
+            right: 10px;
+        }
+    </style>
+    <script type="application/javascript">
+        window.onload = function () {
+            const slide = document.querySelector('.slide');
+            const images = document.querySelectorAll('.slide img');
+            const prevBtn = document.getElementById('prev');
+            const nextBtn = document.getElementById('next');
+
+            let counter = 1;
+
+
+            // Funzione per ottenere la larghezza dinamica
+            const getWidth = () => images[0].clientWidth;
+
+            // Ci mettiamo sulla prima foto reale (la prima è la copia dell'ultima)
+            slide.style.transform = 'translateX(' + (-getWidth() * counter) + 'px)';
+
+            // Pulsante Avanti
+            nextBtn.addEventListener('click', () => {
+                if (counter >= images.length - 1) return; // Evita clic multipli durante la transizione
+                slide.style.transition = "transform 0.5s ease-in-out";
+                counter++;
+                slide.style.transform = 'translateX(' + (-getWidth() * counter) + 'px)';
+
+            });
+
+            // Pulsante Indietro
+            prevBtn.addEventListener('click', () => {
+                if (counter <= 0) return; // Evita clic multipli durante la transizione
+                slide.style.transition = "transform 0.5s ease-in-out";
+                counter--;
+                slide.style.transform = 'translateX(' + (-getWidth() * counter) + 'px)';
+
+            });
+
+            // Questo evento controlla quando la transizione finisce
+            slide.addEventListener('transitionend', () => {
+                // Se siamo sul clone della prima immagine, saltiamo alla prima reale
+                if (images[counter].id === 'firstClone') {
+                    slide.style.transition = "none";
+                    counter = 1;
+                    slide.style.transform = 'translateX(' + (-getWidth() * counter) + 'px)'; //porta lo slide alla prima foto (translateX(-(larghezzaSlide*1)px) sposta la slide di 1 slide a sx partendo dalla slide 0, quindi va sulla copia dell'ultima slide (lastClone))
+                }
+                // Se siamo sul clone dell'ultima immagine, saltiamo all'ultima reale
+                if (images[counter].id === 'lastClone') {
+                    slide.style.transition = "none";
+                    counter = images.length - 2;
+                    slide.style.transform = 'translateX(' + (-getWidth() * counter) + 'px)';
+                }
+
+            });
+
+            // Opzionale: Adatta il carosello se l'utente ridimensiona la finestra
+            window.addEventListener('resize', () => {
+                slide.style.transition = "none";
+                const newSize = images[0].clientWidth;
+                slide.style.transform = 'translateX(' + (-newSize * counter) + 'px)';
+            });
+        }
+
+
+    </script>
+</head>
+
+<body>
+    <div id="container">
+        <button class="btn" id="prev">&#10094;</button>
+        <div class="slide">
+            <!-- Clone dell'ultima immagine -->
+            <img src="./img/img_05.jpg" id="lastClone" alt="">
+
+            <img src="./img/img_01.jpg" alt="Immagine 1">
+            <img src="./img/img_02.jpg" alt="Immagine 2">
+            <img src="./img/img_03.jpg" alt="Immagine 3">
+            <img src="./img/img_04.jpg" alt="Immagine 4">
+            <img src="./img/img_05.jpg" alt="Immagine 5">
+
+            <!-- Clone della prima immagine -->
+            <img src="./img/img_01.jpg" id="firstClone" alt="">
+        </div>
+        <button class="btn" id="next">&#10095;</button>
+    </div>
+</body>
+
+</html>
